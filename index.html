@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locksy - Password Manager</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <i class="fas fa-shield-alt logo-icon"></i>
+                    <h1>Locksy</h1>
+                    <p>Secure Password Manager</p>
+                </div>
+                
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i>
+                            Password
+                        </label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="password" placeholder="Enter your password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </button>
+                    
+                    <div id="loginError" class="error-message"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="page">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <i class="fas fa-shield-alt"></i>
+                <h2>Locksy</h2>
+            </div>
+            
+            <div class="header-right">
+                <button class="icon-btn" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <button class="icon-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchBar" placeholder="Search passwords..." class="search-input">
+                <button class="filter-btn" onclick="toggleFilter()">
+                    <i class="fas fa-filter"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Password Cards Grid -->
+        <div class="cards-container">
+            <div id="passwordGrid" class="password-grid">
+                <!-- Password cards will be dynamically added here -->
+            </div>
+        </div>
+        
+        <!-- Floating Action Button -->
+        <div class="fab-container">
+            <button class="fab" id="fabButton">
+                <i class="fas fa-plus"></i>
+                <span class="fab-tooltip">Add New Password</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Add/Edit Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Password</h3>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="passwordForm" class="password-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="entryName">
+                            <i class="fas fa-tag"></i>
+                            Name *
+                        </label>
+                        <input type="text" id="entryName" placeholder="e.g., Gmail Account" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="websiteUrl">
+                            <i class="fas fa-globe"></i>
+                            Website URL
+                        </label>
+                        <input type="url" id="websiteUrl" placeholder="https://example.com">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userName">
+                            <i class="fas fa-user"></i>
+                            Username
+                        </label>
+                        <input type="text" id="userName" placeholder="Username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gmail">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </label>
+                        <input type="email" id="gmail" placeholder="email@example.com">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="entryPassword">
+                            <i class="fas fa-key"></i>
+                            Password
+                        </label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="entryPassword" placeholder="Password">
+                            <button type="button" class="toggle-password" onclick="togglePassword('entryPassword')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" class="generate-password" onclick="generatePassword()">
+                                <i class="fas fa-dice"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="googleAuthKey">
+                            <i class="fas fa-shield-alt"></i>
+                            Google Auth Key
+                        </label>
+                        <div class="auth-key-wrapper">
+                            <input type="text" id="googleAuthKey" placeholder="2FA Secret Key">
+                            <div id="totpDisplay" class="totp-display">
+                                <span id="totpCode" class="totp-code">------</span>
+                                <div class="totp-timer">
+                                    <svg class="timer-circle" width="24" height="24">
+                                        <circle cx="12" cy="12" r="10" stroke="#e5e7eb" stroke-width="2" fill="none"></circle>
+                                        <circle id="timerProgress" cx="12" cy="12" r="10" stroke="#6366f1" stroke-width="2" fill="none"
+                                                stroke-dasharray="62.83" stroke-dashoffset="62.83"
+                                                transform="rotate(-90 12 12)"></circle>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="recoveryEmail">
+                            <i class="fas fa-life-ring"></i>
+                            Recovery Email
+                        </label>
+                        <input type="email" id="recoveryEmail" placeholder="recovery@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="twoFALink">
+                            <i class="fas fa-link"></i>
+                            2FA Link
+                        </label>
+                        <input type="url" id="twoFALink" placeholder="https://2fa.example.com">
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="notes">
+                        <i class="fas fa-sticky-note"></i>
+                        Notes
+                    </label>
+                    <textarea id="notes" rows="3" placeholder="Additional notes..."></textarea>
+                </div>
+                
+                <!-- Dynamic Custom Fields -->
+                <div id="customFields"></div>
+                
+                <button type="button" class="add-field-btn" onclick="addCustomField()">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Custom Field
+                </button>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- View Password Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content view-modal">
+            <div class="modal-header">
+                <h3 id="viewModalTitle">Password Details</h3>
+                <button class="close-btn" onclick="closeViewModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="viewModalContent" class="view-content">
+                <!-- Content will be dynamically added -->
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeViewModal()">Close</button>
+                <button class="btn-primary" onclick="editFromView()">
+                    <i class="fas fa-edit"></i>
+                    Edit
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <!-- TOTP Library -->
+    <script src="https://unpkg.com/otpauth@9.1.4/dist/otpauth.umd.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
