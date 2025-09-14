@@ -17,7 +17,7 @@ A secure password manager application built with HTML, CSS, JavaScript, and Fire
 
 ```
 Email: admin@example.com
-Password: 1357ac09J@J
+Password: admin
 ```
 
 ## How to Use
